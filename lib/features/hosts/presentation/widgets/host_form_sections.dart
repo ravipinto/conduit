@@ -393,61 +393,61 @@ class HostAdvancedSection extends StatelessWidget {
             child: SwitchListTile(
               contentPadding: EdgeInsets.zero,
               title: const Text('Connect with Mosh'),
-            subtitle: const Text(
-              'Roaming UDP session over SSH. Requires mosh-server on the '
-              'host and open UDP ports.',
-            ),
-            value: useMosh,
+              subtitle: const Text(
+                'Roaming UDP session over SSH. Requires mosh-server on the '
+                'host and open UDP ports.',
+              ),
+              value: useMosh,
               onChanged: onUseMoshChanged,
             ),
           ),
           if (useMosh) ...[
-          const SizedBox(height: 16),
-          TextFormField(
-            controller: moshLocaleController,
-            decoration: const InputDecoration(
-              labelText: 'Mosh locale',
-              helperText: 'Must be a UTF-8 locale installed on the host.',
-              helperMaxLines: 2,
-              prefixIcon: Icon(Icons.language_outlined),
-            ),
-            autocorrect: false,
-            enableSuggestions: false,
-            textInputAction: TextInputAction.next,
-          ),
-          const SizedBox(height: 16),
-          TextFormField(
-            controller: moshPortsController,
-            decoration: const InputDecoration(
-              labelText: 'Mosh UDP ports',
-              helperText:
-                  'Port or range like 60000:61000. Empty uses 60001:60999.',
-              helperMaxLines: 2,
-              errorMaxLines: 2,
-              prefixIcon: Icon(Icons.settings_ethernet_rounded),
-            ),
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(RegExp(r'[0-9:]')),
-            ],
-            validator: moshPortsValidator,
-            autocorrect: false,
-            enableSuggestions: false,
-            textInputAction: TextInputAction.next,
-          ),
-          const SizedBox(height: 16),
-          Material(
-            color: Colors.transparent,
-            child: SwitchListTile(
-              contentPadding: EdgeInsets.zero,
-              title: const Text('Predictive echo (experimental)'),
-              subtitle: const Text(
-                'Show local input previews on laggy Mosh sessions.',
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: moshLocaleController,
+              decoration: const InputDecoration(
+                labelText: 'Mosh locale',
+                helperText: 'Must be a UTF-8 locale installed on the host.',
+                helperMaxLines: 2,
+                prefixIcon: Icon(Icons.language_outlined),
               ),
-              value: predictiveEchoEnabled,
-              onChanged: onPredictiveEchoChanged,
+              autocorrect: false,
+              enableSuggestions: false,
+              textInputAction: TextInputAction.next,
             ),
-          ),
-        ],
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: moshPortsController,
+              decoration: const InputDecoration(
+                labelText: 'Mosh UDP ports',
+                helperText:
+                    'Port or range like 60000:61000. Empty uses 60001:60999.',
+                helperMaxLines: 2,
+                errorMaxLines: 2,
+                prefixIcon: Icon(Icons.settings_ethernet_rounded),
+              ),
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(RegExp(r'[0-9:]')),
+              ],
+              validator: moshPortsValidator,
+              autocorrect: false,
+              enableSuggestions: false,
+              textInputAction: TextInputAction.next,
+            ),
+            const SizedBox(height: 16),
+            Material(
+              color: Colors.transparent,
+              child: SwitchListTile(
+                contentPadding: EdgeInsets.zero,
+                title: const Text('Predictive echo (experimental)'),
+                subtitle: const Text(
+                  'Show local input previews on laggy Mosh sessions.',
+                ),
+                value: predictiveEchoEnabled,
+                onChanged: onPredictiveEchoChanged,
+              ),
+            ),
+          ],
           const SizedBox(height: 16),
           Material(
             color: Colors.transparent,
@@ -461,66 +461,66 @@ class HostAdvancedSection extends StatelessWidget {
               onChanged: onStartTmuxOnConnectChanged,
             ),
           ),
-        if (startTmuxOnConnect) ...[
-          const SizedBox(height: 16),
-          TextFormField(
-            controller: tmuxSessionNameController,
-            decoration: const InputDecoration(
-              labelText: 'Tmux session name',
-              hintText: defaultTmuxSessionName,
-              helperText: 'Conduit attaches to this session, or creates it.',
-              helperMaxLines: 2,
-              prefixIcon: Icon(Icons.view_stream_outlined),
+          if (startTmuxOnConnect) ...[
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: tmuxSessionNameController,
+              decoration: const InputDecoration(
+                labelText: 'Tmux session name',
+                hintText: defaultTmuxSessionName,
+                helperText: 'Conduit attaches to this session, or creates it.',
+                helperMaxLines: 2,
+                prefixIcon: Icon(Icons.view_stream_outlined),
+              ),
+              autocorrect: false,
+              enableSuggestions: false,
+              textInputAction: TextInputAction.next,
             ),
-            autocorrect: false,
-            enableSuggestions: false,
-            textInputAction: TextInputAction.next,
-          ),
-          const SizedBox(height: 16),
-          TextFormField(
-            controller: tmuxStartDirectoryController,
-            decoration: const InputDecoration(
-              labelText: 'Tmux start directory',
-              hintText: '~/projects',
-              helperText:
-                  'Used when a new tmux session is created. An existing tmux '
-                  'session keeps its directory.',
-              helperMaxLines: 2,
-              prefixIcon: Icon(Icons.folder_outlined),
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: tmuxStartDirectoryController,
+              decoration: const InputDecoration(
+                labelText: 'Tmux start directory',
+                hintText: '~/projects',
+                helperText:
+                    'Used when a new tmux session is created. An existing tmux '
+                    'session keeps its directory.',
+                helperMaxLines: 2,
+                prefixIcon: Icon(Icons.folder_outlined),
+              ),
+              autocorrect: false,
+              enableSuggestions: false,
+              textInputAction: TextInputAction.next,
             ),
-            autocorrect: false,
-            enableSuggestions: false,
-            textInputAction: TextInputAction.next,
-          ),
-        ],
-        const SizedBox(height: 12),
-        DropdownButtonFormField<TmuxPrefixKey>(
-          initialValue: tmuxPrefixKey,
-          decoration: const InputDecoration(
-            labelText: 'Tmux prefix',
-            helperText: 'Used by the Tmux and Tmux+ key-row buttons.',
-            helperMaxLines: 2,
-            prefixIcon: Icon(Icons.keyboard_command_key_rounded),
-          ),
-          items: [
-            for (final key in TmuxPrefixKey.values)
-              DropdownMenuItem(value: key, child: Text(key.label)),
           ],
-          onChanged: (value) {
-            if (value != null) {
-              onTmuxPrefixKeyChanged(value);
-            }
-          },
-        ),
+          const SizedBox(height: 12),
+          DropdownButtonFormField<TmuxPrefixKey>(
+            initialValue: tmuxPrefixKey,
+            decoration: const InputDecoration(
+              labelText: 'Tmux prefix',
+              helperText: 'Used by the Tmux and Tmux+ key-row buttons.',
+              helperMaxLines: 2,
+              prefixIcon: Icon(Icons.keyboard_command_key_rounded),
+            ),
+            items: [
+              for (final key in TmuxPrefixKey.values)
+                DropdownMenuItem(value: key, child: Text(key.label)),
+            ],
+            onChanged: (value) {
+              if (value != null) {
+                onTmuxPrefixKeyChanged(value);
+              }
+            },
+          ),
           const SizedBox(height: 18),
           SnippetListEditor(
-          title: 'Host snippets',
-          caption:
-              'Shown in the Snip key-row menu for this machine. Hidden '
-              'snippets are useful for passwords or other secrets.',
-          snippets: snippets,
-          onChanged: onSnippetsChanged,
-          connectSnippetId: connectSnippetId,
+            title: 'Host snippets',
+            caption:
+                'Shown in the Snip key-row menu for this machine. Hidden '
+                'snippets are useful for passwords or other secrets.',
+            snippets: snippets,
+            onChanged: onSnippetsChanged,
+            connectSnippetId: connectSnippetId,
             onConnectSnippetChanged: onConnectSnippetChanged,
           ),
         ],
