@@ -88,7 +88,8 @@ class HostCard extends StatelessWidget {
                             height: 1.25,
                           ),
                         ),
-                        if (host.tags.isNotEmpty ||
+                        if (host.sftpOnly ||
+                            host.tags.isNotEmpty ||
                             host.lastConnectedAt != null) ...[
                           const SizedBox(height: 6),
                           Wrap(
@@ -99,6 +100,11 @@ class HostCard extends StatelessWidget {
                                 icon: authIcon,
                                 label: _authLabel(host),
                               ),
+                              if (host.sftpOnly)
+                                const _MetaChip(
+                                  icon: Icons.folder_open_outlined,
+                                  label: 'SFTP only',
+                                ),
                               for (final tag in host.tags)
                                 _MetaChip(
                                   icon: Icons.tag_rounded,
