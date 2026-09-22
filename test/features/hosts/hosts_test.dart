@@ -170,6 +170,7 @@ void main() {
         ],
         connectSnippetId: 'snippet:deploy',
         lastConnectedAt: DateTime.parse('2025-01-02T03:04:05Z'),
+        sftpOnly: true,
       );
 
       final decoded = SavedHost.fromJson(original.toJson());
@@ -199,6 +200,7 @@ void main() {
       expect(decoded.snippets, original.snippets);
       expect(decoded.connectSnippetId, original.connectSnippetId);
       expect(decoded.lastConnectedAt, original.lastConnectedAt);
+      expect(decoded.sftpOnly, isTrue);
     });
 
     test('invalid persisted mosh ports fall back to the default', () {
@@ -228,6 +230,7 @@ void main() {
       });
 
       expect(decoded.startTmuxOnConnect, isFalse);
+      expect(decoded.sftpOnly, isFalse);
       expect(decoded.tmuxPrefixKey, TmuxPrefixKey.controlB);
       expect(decoded.tmuxSessionName, defaultTmuxSessionName);
       expect(decoded.tmuxStartDirectory, isEmpty);
@@ -412,6 +415,90 @@ void main() {
       expect(decoded.authMethod, SshAuthMethod.external);
       expect(decoded.externalAuthOfferKey, isFalse);
       expect(decoded.isValid, isTrue);
+    });
+  });
+
+  group('HostFormPage SFTP-only mode', () {
+    testWidgets('loads SFTP-only mode and hides terminal-only settings', (
+      tester,
+    ) async {
+      const host = SavedHost(
+        id: 'sftp',
+        name: 'Files',
+        host: 'example.com',
+        port: 22,
+        username: 'root',
+        authMethod: SshAuthMethod.password,
+        password: 'secret',
+        sftpOnly: true,
+        useMosh: true,
+        startTmuxOnConnect: true,
+      );
+
+      await tester.pumpWidget(const MaterialApp(home: HostFormPage(host: host)));
+      await tester.pumpAndSettle();
+
+      final sftpSwitch = tester.widget<SwitchListTile>(
+        find.widgetWithText(SwitchListTile, 'SFTP only'),
+      );
+      expect(sftpSwitch.value, isTrue);
+      expect(find.text('Connect with Mosh'), findsNothing);
+      expect(find.text('Start tmux on connect'), findsNothing);
+      expect(find.text('Host snippets'), findsNothing);
+    });
+
+    testWidgets('enabling SFTP-only clears terminal-only settings on save', (
+      tester,
+    ) async {
+      const host = SavedHost(
+        id: 'host',
+        name: 'Host',
+        host: 'example.com',
+        port: 22,
+        username: 'root',
+        authMethod: SshAuthMethod.password,
+        password: 'secret',
+        useMosh: true,
+        startTmuxOnConnect: true,
+      );
+
+      SavedHost? saved;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Builder(
+            builder: (context) => Scaffold(
+              body: Center(
+                child: FilledButton(
+                  onPressed: () async {
+                    saved = await Navigator.of(context).push<SavedHost>(
+                      MaterialPageRoute(builder: (_) => const HostFormPage(host: host)),
+                    );
+                  },
+                  child: const Text('Open'),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.tap(find.text('Open'));
+      await tester.pumpAndSettle();
+
+      final sftpFinder = find.widgetWithText(SwitchListTile, 'SFTP only');
+      await tester.ensureVisible(sftpFinder);
+      await tester.tap(sftpFinder);
+      await tester.pumpAndSettle();
+
+      final save = find.text('Save changes');
+      await tester.ensureVisible(save);
+      await tester.tap(save);
+      await tester.pumpAndSettle();
+
+      expect(saved, isNotNull);
+      expect(saved!.sftpOnly, isTrue);
+      expect(saved!.useMosh, isFalse);
+      expect(saved!.startTmuxOnConnect, isFalse);
+      expect(saved!.connectSnippetId, isEmpty);
     });
   });
 
