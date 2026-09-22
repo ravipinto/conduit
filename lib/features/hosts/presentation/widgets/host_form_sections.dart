@@ -299,6 +299,7 @@ class HostAdvancedSection extends StatelessWidget {
     required this.moshPortsController,
     required this.tmuxSessionNameController,
     required this.tmuxStartDirectoryController,
+    required this.sftpOnly,
     required this.useMosh,
     required this.predictiveEchoEnabled,
     required this.startTmuxOnConnect,
@@ -309,6 +310,7 @@ class HostAdvancedSection extends StatelessWidget {
     required this.moshPortsValidator,
     required this.onAddTag,
     required this.onRemoveTag,
+    required this.onSftpOnlyChanged,
     required this.onUseMoshChanged,
     required this.onPredictiveEchoChanged,
     required this.onStartTmuxOnConnectChanged,
@@ -326,6 +328,7 @@ class HostAdvancedSection extends StatelessWidget {
   final TextEditingController moshPortsController;
   final TextEditingController tmuxSessionNameController;
   final TextEditingController tmuxStartDirectoryController;
+  final bool sftpOnly;
   final bool useMosh;
   final bool predictiveEchoEnabled;
   final bool startTmuxOnConnect;
@@ -336,6 +339,7 @@ class HostAdvancedSection extends StatelessWidget {
   final FormFieldValidator<String> moshPortsValidator;
   final ValueChanged<String> onAddTag;
   final ValueChanged<String> onRemoveTag;
+  final ValueChanged<bool> onSftpOnlyChanged;
   final ValueChanged<bool> onUseMoshChanged;
   final ValueChanged<bool> onPredictiveEchoChanged;
   final ValueChanged<bool> onStartTmuxOnConnectChanged;
@@ -374,16 +378,30 @@ class HostAdvancedSection extends StatelessWidget {
           color: Colors.transparent,
           child: SwitchListTile(
             contentPadding: EdgeInsets.zero,
-            title: const Text('Connect with Mosh'),
+            title: const Text('SFTP only'),
+            subtitle: const Text(
+              'Open the file browser instead of a terminal when connecting.',
+            ),
+            value: sftpOnly,
+            onChanged: onSftpOnlyChanged,
+          ),
+        ),
+        if (!sftpOnly) ...[
+          const SizedBox(height: 4),
+          Material(
+            color: Colors.transparent,
+            child: SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              title: const Text('Connect with Mosh'),
             subtitle: const Text(
               'Roaming UDP session over SSH. Requires mosh-server on the '
               'host and open UDP ports.',
             ),
             value: useMosh,
-            onChanged: onUseMoshChanged,
+              onChanged: onUseMoshChanged,
+            ),
           ),
-        ),
-        if (useMosh) ...[
+          if (useMosh) ...[
           const SizedBox(height: 16),
           TextFormField(
             controller: moshLocaleController,
@@ -430,19 +448,19 @@ class HostAdvancedSection extends StatelessWidget {
             ),
           ),
         ],
-        const SizedBox(height: 16),
-        Material(
-          color: Colors.transparent,
-          child: SwitchListTile(
-            contentPadding: EdgeInsets.zero,
-            title: const Text('Start tmux on connect'),
-            subtitle: const Text(
-              'Attach to the named tmux session, or create it if needed.',
+          const SizedBox(height: 16),
+          Material(
+            color: Colors.transparent,
+            child: SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              title: const Text('Start tmux on connect'),
+              subtitle: const Text(
+                'Attach to the named tmux session, or create it if needed.',
+              ),
+              value: startTmuxOnConnect,
+              onChanged: onStartTmuxOnConnectChanged,
             ),
-            value: startTmuxOnConnect,
-            onChanged: onStartTmuxOnConnectChanged,
           ),
-        ),
         if (startTmuxOnConnect) ...[
           const SizedBox(height: 16),
           TextFormField(
@@ -494,8 +512,8 @@ class HostAdvancedSection extends StatelessWidget {
             }
           },
         ),
-        const SizedBox(height: 18),
-        SnippetListEditor(
+          const SizedBox(height: 18),
+          SnippetListEditor(
           title: 'Host snippets',
           caption:
               'Shown in the Snip key-row menu for this machine. Hidden '
@@ -503,8 +521,9 @@ class HostAdvancedSection extends StatelessWidget {
           snippets: snippets,
           onChanged: onSnippetsChanged,
           connectSnippetId: connectSnippetId,
-          onConnectSnippetChanged: onConnectSnippetChanged,
-        ),
+            onConnectSnippetChanged: onConnectSnippetChanged,
+          ),
+        ],
       ],
     );
   }
