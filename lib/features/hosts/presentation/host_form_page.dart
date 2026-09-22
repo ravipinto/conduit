@@ -55,6 +55,7 @@ class _HostFormPageState extends State<HostFormPage> {
   SshAuthMethod _authMethod = SshAuthMethod.password;
   bool _showPassword = false;
   bool _showPassphrase = false;
+  bool _sftpOnly = false;
   bool _useMosh = false;
   bool _predictiveEchoEnabled = false;
   bool _externalAuthOfferKey = true;
@@ -104,6 +105,7 @@ class _HostFormPageState extends State<HostFormPage> {
       }
       _timeoutController.text = host.connectionTimeoutSeconds.toString();
       _authMethod = host.authMethod;
+      _sftpOnly = host.sftpOnly;
       _useMosh = host.useMosh;
       _moshLocaleController.text = host.moshLocale;
       _moshPortsController.text = host.moshPorts;
@@ -290,6 +292,7 @@ class _HostFormPageState extends State<HostFormPage> {
               moshPortsController: _moshPortsController,
               tmuxSessionNameController: _tmuxSessionNameController,
               tmuxStartDirectoryController: _tmuxStartDirectoryController,
+              sftpOnly: _sftpOnly,
               useMosh: _useMosh,
               predictiveEchoEnabled: _predictiveEchoEnabled,
               startTmuxOnConnect: _startTmuxOnConnect,
@@ -300,6 +303,15 @@ class _HostFormPageState extends State<HostFormPage> {
               moshPortsValidator: _validateMoshPorts,
               onAddTag: _addTag,
               onRemoveTag: _removeTag,
+              onSftpOnlyChanged: (value) => setState(() {
+                _sftpOnly = value;
+                if (value) {
+                  _useMosh = false;
+                  _predictiveEchoEnabled = false;
+                  _startTmuxOnConnect = false;
+                  _connectSnippetId = '';
+                }
+              }),
               onUseMoshChanged: (value) => setState(() {
                 _useMosh = value;
                 if (value) {
@@ -723,6 +735,7 @@ class _HostFormPageState extends State<HostFormPage> {
           ? _connectSnippetId
           : '',
       lastConnectedAt: currentHost?.lastConnectedAt,
+      sftpOnly: _sftpOnly,
     );
 
     Navigator.of(context).pop(savedHost);
