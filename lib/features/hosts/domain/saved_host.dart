@@ -149,6 +149,7 @@ class SavedHost {
     this.snippets = const [],
     this.connectSnippetId = '',
     this.lastConnectedAt,
+    this.sftpOnly = false,
     this.isLocal = false,
   });
 
@@ -189,6 +190,7 @@ class SavedHost {
   final List<TerminalSnippet> snippets;
   final String connectSnippetId;
   final DateTime? lastConnectedAt;
+  final bool sftpOnly;
   final bool isLocal;
 
   bool get isValid =>
@@ -263,6 +265,7 @@ class SavedHost {
     String? connectSnippetId,
     DateTime? lastConnectedAt,
     bool clearLastConnectedAt = false,
+    bool? sftpOnly,
     bool? isLocal,
   }) {
     return SavedHost(
@@ -295,6 +298,7 @@ class SavedHost {
       lastConnectedAt: clearLastConnectedAt
           ? null
           : lastConnectedAt ?? this.lastConnectedAt,
+      sftpOnly: sftpOnly ?? this.sftpOnly,
       isLocal: isLocal ?? this.isLocal,
     );
   }
@@ -333,6 +337,7 @@ class SavedHost {
       'snippets': [for (final snippet in snippets) snippet.toJson()],
       'connectSnippetId': connectSnippetId,
       'lastConnectedAt': lastConnectedAt?.toIso8601String(),
+      'sftpOnly': sftpOnly,
       'isLocal': isLocal,
     };
   }
@@ -389,6 +394,7 @@ class SavedHost {
       lastConnectedAt: lastConnectedAtRaw == null
           ? null
           : DateTime.tryParse(lastConnectedAtRaw),
+      sftpOnly: json['sftpOnly'] as bool? ?? false,
       isLocal: json['isLocal'] as bool? ?? false,
     );
   }
