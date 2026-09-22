@@ -357,11 +357,13 @@ class _HostsPageState extends State<HostsPage> {
   Widget _buildHostCard(SavedHost host, {Widget? dragHandle}) {
     return HostCard(
       host: host,
-      active: widget.workspaceController.sessions.any(
-        (session) => session.host.id == host.id,
-      ),
+      active:
+          !host.sftpOnly &&
+          widget.workspaceController.sessions.any(
+            (session) => session.host.id == host.id,
+          ),
       selectedTag: _selectedTag,
-      onConnect: () => _connect(host),
+      onConnect: () => _openHost(host),
       onAction: (action) => _handleHostAction(action, host),
       onTagTap: (tag) {
         setState(() {
@@ -548,6 +550,14 @@ class _HostsPageState extends State<HostsPage> {
         ),
       ),
     );
+  }
+
+  Future<void> _openHost(SavedHost host) async {
+    if (host.sftpOnly) {
+      await _openFiles(host);
+      return;
+    }
+    await _connect(host);
   }
 
   Future<void> _connect(SavedHost host) async {
